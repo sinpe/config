@@ -1,6 +1,6 @@
 {
     "name": "long/config",
-    "description": "Configuration manager",
+    "description": "Configuration Manager",
     "keywords": ["config"],
     "homepage": "https://github.com/sinpe/php-config",
     "type": "library",
