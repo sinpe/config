@@ -14,6 +14,9 @@ use Illuminate\Support\Arr;
 
 /**
  * Configuration.
+ * 
+ * @package Sinpe\Config
+ * @since   1.0.0
  */
 class Config implements ConfigInterface, \ArrayAccess
 {

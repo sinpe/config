@@ -1,8 +1,8 @@
-配置管理器
+Configuration manager
 =======================================
 
 
-安装
+Install
 -------
 
 composer:

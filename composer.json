@@ -1,6 +1,6 @@
 {
     "name": "long/config",
-    "description": "Configuration",
+    "description": "Configuration manager",
     "keywords": ["config"],
     "homepage": "https://github.com/sinpe/php-config",
     "type": "library",
@@ -22,6 +22,5 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3"
-    },
-    "minimum-stability": "dev"
+    }
 }

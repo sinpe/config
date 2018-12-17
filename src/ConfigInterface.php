@@ -12,6 +12,9 @@ namespace Sinpe\Config;
 
 /**
  * Configuration interface
+ * 
+ * @package Sinpe\Config
+ * @since   1.0.0
  */
 interface ConfigInterface
 {
