@@ -1,8 +1,6 @@
-Configuration manager
-=======================================
+# Configuration manager
 
-
-Install
+## Installation
 -------
 
 composer:
@@ -11,12 +9,9 @@ composer:
 composer require long/config
 ```
 
-PHP 7.0 or newer.
+PHP 7.1 or newer.
 
-用例
------
-
-### 例子
+## Examples
 
 
 ```php
