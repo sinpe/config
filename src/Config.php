@@ -1,5 +1,5 @@
 <?php
-/*
+ /*
  * This file is part of the long/config package.
  *
  * (c) Sinpe <support@sinpe.com>
@@ -21,6 +21,27 @@ use Illuminate\Support\Arr;
 class Config implements ConfigInterface, \ArrayAccess
 {
     /**
+     * Paths.
+     *
+     * @var array
+     */
+    protected $paths = [];
+
+    /**
+     * Files loaded.
+     *
+     * @var array
+     */
+    protected $loaded = [];
+
+    /**
+     * Loaded callback.
+     *
+     * @var callback
+     */
+    protected $callback;
+
+    /**
      * Values.
      *
      * @var array
@@ -40,6 +61,84 @@ class Config implements ConfigInterface, \ArrayAccess
     }
 
     /**
+     * Set paths for config file when search.
+     *
+     * @param  string  $key
+     * @param  bool  $append
+     * @return self
+     */
+    public function setPath(string $path, bool $append = false)
+    {
+        $path = rtrim($path, '\\/');
+
+        if ($append) {
+            $this->paths[] = $path;
+        } else {
+            $this->paths = [$path];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the callback after file loaded.
+     *
+     * @param  callable  $callback
+     * @return self
+     */
+    public function setCallback(callable $callback)
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Load config from file.
+     *
+     * @param  string  $file
+     * @return self
+     */
+    public function load(string $file)
+    {
+        if ($this->loaded[$file]) {
+            return $this;
+        }
+
+        // full path
+        if (file_exists($file)) {
+
+            $datas = include_once $file;
+
+            if (is_callable($this->callback)) {
+                $datas = $this->callback($datas);
+            }
+
+            $this->loaded[$file] = true;
+
+            if (!is_null($datas)) {
+
+                $pathParts = pathinfo($file);
+
+                $this->set($pathParts['filename'], $datas);
+            }
+        } else {
+            $file = trim($file, '\\/');
+
+            foreach ($this->paths as $path) {
+
+                $fullFile = $path . '/' . $file;
+
+                if (file_exists($fullFile)) {
+                    $this->load($fullFile);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Determine if a config exists in the sets by key.
      *
      * @param  mixed  $key
@@ -49,7 +148,7 @@ class Config implements ConfigInterface, \ArrayAccess
     {
         $keys = is_array($key) ? $key : func_get_args();
 
-        return Arr::has($this->items, $key);
+        return Arr::has($this->items, $keys);
     }
 
     /**
@@ -66,7 +165,18 @@ class Config implements ConfigInterface, \ArrayAccess
             return $this->getMany($key);
         }
 
-        return Arr::get($this->items, $key, $default);
+        $value = Arr::get($this->items, $key, $default);
+
+        if (is_null($value)) {
+            // load
+            $keys = explode('.', $key);
+
+            $this->load($keys[0]);
+
+            $value = $this->get($key, $default);
+        }
+
+        return $value;
     }
 
     /**
@@ -84,7 +194,7 @@ class Config implements ConfigInterface, \ArrayAccess
             if (is_numeric($key)) {
                 list($key, $default) = [$default, null];
             }
-            $config[$key] = Arr::get($this->items, $key, $default);
+            $config[$key] = $this->get($key, $default); //Arr::get($this->items, $key, $default);
         }
 
         return $config;
@@ -125,7 +235,7 @@ class Config implements ConfigInterface, \ArrayAccess
      */
     public function remove($keys)
     {
-        foreach ((array) $keys as $key) {
+        foreach ((array)$keys as $key) {
             $this->offsetUnset($key);
         }
         return $this;
