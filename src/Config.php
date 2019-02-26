@@ -111,7 +111,7 @@ class Config implements ConfigInterface, \ArrayAccess
             $datas = include_once $file;
 
             if (is_callable($this->callback)) {
-                $datas = $this->callback($datas);
+                $datas = call_user_func($this->callback, $datas);
             }
 
             $this->loaded[$file] = true;
@@ -123,7 +123,7 @@ class Config implements ConfigInterface, \ArrayAccess
                 $this->set($pathParts['filename'], $datas);
             }
         } else {
-            $file = trim($file, '\\/');
+            $file = trim($file, '\\/') . '.php';
 
             foreach ($this->paths as $path) {
 
