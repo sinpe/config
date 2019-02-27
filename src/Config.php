@@ -194,7 +194,7 @@ class Config implements ConfigInterface, \ArrayAccess
             if (is_numeric($key)) {
                 list($key, $default) = [$default, null];
             }
-            $config[$key] = $this->get($key, $default); //Arr::get($this->items, $key, $default);
+            $config[$key] = $this->get($key, $default); 
         }
 
         return $config;
