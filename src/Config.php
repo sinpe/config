@@ -112,6 +112,10 @@ class Config implements ConfigInterface, \ArrayAccess
 
             if (is_callable($this->callback)) {
                 $datas = call_user_func($this->callback, $datas);
+            } else {
+                if (is_callable($datas)) {
+                    $datas = call_user_func($datas);
+                }
             }
 
             $this->loaded[$file] = true;
