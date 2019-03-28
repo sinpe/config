@@ -101,7 +101,7 @@ class Config implements ConfigInterface, \ArrayAccess
      */
     public function load(string $file)
     {
-        if ($this->loaded[$file]) {
+        if (isset($this->loaded[$file])) {
             return $this;
         }
 
