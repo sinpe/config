@@ -106,7 +106,7 @@ class Config implements ConfigInterface, \ArrayAccess
         }
 
         // full path
-        if (file_exists($file)) {
+        if (file_exists($file) && !is_dir($file)) {
 
             $datas = include_once $file;
 
