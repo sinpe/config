@@ -124,20 +124,29 @@ class Config implements ConfigInterface, \ArrayAccess
 
                 $this->set($pathParts['filename'], $datas);
             }
-        } else {
-            $file = trim($file, '\\/') . '.php';
 
-            foreach ($this->paths as $path) {
+            return $this;
+        }
 
-                $fullFile = $path . '/' . $file;
+        $file = trim($file, '\\/') . '.php';
 
-                if (file_exists($fullFile)) {
-                    $this->load($fullFile);
-                }
+        $exists = false;
+
+        foreach ($this->paths as $path) {
+
+            $fullFile = $path . '/' . $file;
+
+            if (file_exists($fullFile) && !is_dir($fullFile)) {
+                $this->load($fullFile);
+                $exists = true;
             }
         }
 
-        return $this;
+        if ($exists) {
+            return $this;
+        } else {
+            return $exists;
+        }
     }
 
     /**
@@ -173,9 +182,9 @@ class Config implements ConfigInterface, \ArrayAccess
             // load
             $keys = explode('.', $key);
 
-            $this->load($keys[0]);
-
-            $value = $this->get($key, $default);
+            if (false !== $this->load($keys[0])) {
+                $value = $this->get($key, $default);
+            }
         }
 
         return $value;
