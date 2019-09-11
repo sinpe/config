@@ -170,7 +170,7 @@ class Config implements ConfigInterface, \ArrayAccess
      * 
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null, $try=true)
     {
         if (is_array($key)) {
             return $this->getMany($key);
@@ -178,12 +178,12 @@ class Config implements ConfigInterface, \ArrayAccess
 
         $value = static::getData($this->items, $key, $default);
 
-        if (is_null($value)) {
+        if (is_null($value) && $try) {
             // load
             $keys = explode('.', $key);
 
             if (false !== $this->load($keys[0])) {
-                $value = $this->get($key, $default);
+                $value = $this->get($key, $default, false);
             }
         }
 
